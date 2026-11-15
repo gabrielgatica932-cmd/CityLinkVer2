@@ -86,9 +86,9 @@ implements Rastreable, Facturable{
             calcularCosto(repartidor.getVehiculo());
         }
         public int getCodigo() { return codigo;}
-        public Cliente getCLiente() { return cliente;}
+        public Cliente getCliente() { return cliente;}
         public double getDistanciaKm() { return distanciaKm;}
-        public double getPEsoKg(){ return pesoKg;}
+        public double getPesoKg(){ return pesoKg;}
         public Repartidor getRepartidor(){ return repartidor;}
 
         @Override
@@ -164,7 +164,3 @@ public int getPrioridad(){
             return 2;
         }
     }
-
-
-        
-    
