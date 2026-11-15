@@ -1,4 +1,4 @@
-public abstract class pedido
+public abstract class Pedido
 implements Rastreable, Facturable{
 
     private final int codigo;
@@ -9,22 +9,19 @@ implements Rastreable, Facturable{
     private Repartidor repartidor;
 
     public Pedido(int codigo, Cliente cliente, double distanciaKm, double pesoKg){
-        if (Codigo <= 0){
-            throw new
-            illegalArgumentException("el codigo debe ser mayor que cero.");
+        if (codigo <= 0){
+            throw new IllegalArgumentException("El código debe ser mayor que cero.");
         }
         if(cliente == null){
-            throw new
-            illegalArgumentException("El pedido necesita un cliente.");
+            throw new IllegalArgumentException("El pedido necesita un cliente.");
         }
         if (distanciaKm <= 0 || pesoKg <= 0){
-            throw new 
-            illegalArgumentException("Distancia y paso deben ser mayores que cero.");
+            throw new IllegalArgumentException("Distancia y peso deben ser mayores que cero.");
         }
         this.codigo = codigo;
         this.cliente = cliente;
         this.distanciaKm = distanciaKm;
-        this.pesoKg = pesokg;
+        this.pesoKg = pesoKg;
         this.estado = EstadoPedido.PENDIENTE;
     }
     public abstract String getTipo();
@@ -34,36 +31,31 @@ implements Rastreable, Facturable{
     public abstract int getPrioridad();
 
     public void
-    asignarRepartidor(Repartidor repartidor ) throws
-    CapacidadExcedidaException{
+    asignarRepartidor(Repartidor repartidor ) throws Excepciones.CapacidadExcedidaException{
         if(repartidor == null){
             throw new
-            illegalArgumentException("El repartidor no puede ser nulo.");
+            IllegalArgumentException("El repartidor no puede ser nulo.");
         }
         if(estado != EstadoPedido.PENDIENTE){
-            throw new
-            EstadoinvalidoException("Solo se puede asignar un pedido pendiente (estado actual: " + estado + ").");
+            throw new Excepciones.EstadoInvalidoException("Solo se puede asignar un pedido pendiente (estado actual: " + estado + ").");
         }
         Vehiculo vehiculo = repartidor.getVehiculo();
         if(!vehiculo.puedeTransportar(pesoKg)){
-            throw new
-            CapacidadExcedidaException("La " + vehicull.getTipo() + "no puede llevar" + pesoKg + " kg (maximo " + vehiculo.getCapacidadKg() + "Kg).");
+            throw new Excepciones.CapacidadExcedidaException("La " + vehiculo.getTipo() + "no puede llevar" + pesoKg + " kg (maximo " + vehiculo.getCapacidadKg() + "Kg).");
         }
         this.repartidor = repartidor;
         this.estado = EstadoPedido.ASIGNADO;
     }
     public void avanzarEstado(){
         if(estado == EstadoPedido.PENDIENTE){
-            throw new
-            EstadoinvalidoException("El pedido #" + codigo + "debe asignarse a un repartidor antes de avanzar.");
+            throw new Excepciones.EstadoInvalidoException("El pedido #" + codigo + "debe asignarse a un repartidor antes de avanzar.");
         }
         estado = estado.siguiente();
     }
 
     public void desasignar(){
         if(estado != EstadoPedido.ASIGNADO){
-            throw new
-            EstadoinvalidoException("Solo se puede desasignar un pedido ASIGNADO (estado actual: " + estado + ").");
+            throw new Excepciones.EstadoInvalidoException("Solo se puede desasignar un pedido ASIGNADO (estado actual: " + estado + ").");
         }
         this.repartidor = null;
         this.estado = EstadoPedido.PENDIENTE;
@@ -71,8 +63,7 @@ implements Rastreable, Facturable{
 
     public void retrocederEstado(){
         if(estado == EstadoPedido.PENDIENTE || estado == EstadoPedido.ASIGNADO){
-            throw new
-            EstadoinvalidoException("El pedido #" + codigo + "no puede retroceder desde " + estado + ".");
+            throw new Excepciones.EstadoInvalidoException("El pedido #" + codigo + "no puede retroceder desde " + estado + ".");
         }
         estado = estado.anterior();
         }
@@ -89,25 +80,24 @@ implements Rastreable, Facturable{
         @Override
         public double calcularTotal(){
             if(repartidor == null){
-                throw new
-                EstadoinvalidoException("el pedido #" + codigo + "no tiene repartidor asignado, no se puede facturar.");
+                throw new Excepciones.EstadoInvalidoException("El pedido #" + codigo + " no tiene repartidor asignado, no se puede facturar.");
             }
             return
             calcularCosto(repartidor.getVehiculo());
         }
         public int getCodigo() { return codigo;}
-        public CLiente getCLiente() { return cliente;}
+        public Cliente getCLiente() { return cliente;}
         public double getDistanciaKm() { return distanciaKm;}
         public double getPEsoKg(){ return pesoKg;}
-        public Estado Repartidor getRepartidor(){ return repartidor;}
+        public Repartidor getRepartidor(){ return repartidor;}
 
         @Override
         public String toString(){
-            return getTipo() + "#" + codigo + "|" + cliente.getnombre() + "|" + distanciaKm + " km | " + pesoKg + " kg | " + estado;
+            return getTipo() + "#" + codigo + "|" + cliente.getNombre() + "|" + distanciaKm + " km | " + pesoKg + " kg | " + estado;
         } 
     }
 
-    class PedidoNormal extends pedido{
+    class PedidoNormal extends Pedido {
 
         public PedidoNormal(int codigo, Cliente cliente, double distanciaKm,double pesoKg){
             super(codigo,cliente,distanciaKm,pesoKg);
@@ -119,9 +109,9 @@ implements Rastreable, Facturable{
 
         @Override
         public double
-        calcularCosto(vehiculo vehiculo){
+        calcularCosto(Vehiculo vehiculo){
             return
-            vehiculo.calcularCostoViaje(getDistanciaKg());
+            vehiculo.calcularCostoViaje(getDistanciaKm());
         }
 
         @Override
@@ -136,7 +126,7 @@ implements Rastreable, Facturable{
     super(codigo , cliente, distanciaKm,pesoKg);
 }
 @Override
-public String getTIpo(){
+public String getTipo(){
     return "Urgente";
 }
 
@@ -144,7 +134,7 @@ public String getTIpo(){
 public double
 calcularCosto(Vehiculo vehiculo){
     return
-    vehiculo.calcularCostoViaje(getViaje(get distanciaKm()) * 1,5;
+    vehiculo.calcularCostoViaje(getDistanciaKm()) * 1.5;
 }
 
 @Override 
@@ -158,7 +148,7 @@ public int getPrioridad(){
             super(codigo,cliente,distanciaKm, pesoKg);
         }
         @Override
-        public String getTIpo(){
+        public String getTipo(){
             return "Fragil";
         }
 
@@ -174,8 +164,6 @@ public int getPrioridad(){
             return 2;
         }
     }
-
-
 
 
         
