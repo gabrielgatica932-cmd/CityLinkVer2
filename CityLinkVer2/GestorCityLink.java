@@ -59,7 +59,21 @@ public class GestorCityLink {
         return sb.toString();
     }
 
-    // Agregar un repartidor al sistema (ArrayList)
+    public String buscarClientesPorNombre(String texto) {
+        if (texto == null || texto.trim().isEmpty()) {
+            throw new IllegalArgumentException("El texto de búsqueda no puede estar vacío.");
+        }
+        ArrayList<Cliente> encontrados = Algoritmos.busquedaLinealPorNombre(clientes.values(), texto);
+        if (encontrados.isEmpty()) {
+            return "No se encontraron clientes cuyo nombre contenga \"" + texto.trim() + "\".";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Cliente cliente : encontrados) {
+            sb.append(cliente).append("\n");
+        }
+        return sb.toString();
+    }
+
     public void agregarRepartidor(Repartidor repartidor) {
         if (repartidor == null) {
             throw new IllegalArgumentException("El repartidor no puede ser nulo.");
@@ -236,6 +250,14 @@ public class GestorCityLink {
             sb.append(posicion).append(". ").append(pedido).append("\n");
         }
         return sb.toString();
+    }
+
+    public String proximoDespacho() throws Excepciones.EstructuraInvalidaException {
+        Pedido siguiente = colaDespacho.peekFirst();
+        if (siguiente == null) {
+            throw new Excepciones.EstructuraInvalidaException("La cola de despacho está vacía.");
+        }
+        return siguiente.toString();
     }
 
     public String despacharSiguiente(int legajo)
